@@ -1,0 +1,30 @@
+{
+  "name": "@tokenring-ai/kalshi",
+  "version": "0.2.0",
+  "description": "Kalshi prediction market integration for Token Ring",
+  "dependencies": {
+    "@tokenring-ai/app": "0.2.0",
+    "@tokenring-ai/chat": "0.2.0",
+    "@tokenring-ai/agent": "0.2.0",
+    "@tokenring-ai/utility": "0.2.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "vitest": "catalog:",
+    "@vitest/coverage-v8": "^4.0.16",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./*": "./*.ts"
+  },
+  "types": "./index.ts",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsc --noEmit",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  }
+}
