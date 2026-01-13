@@ -15,10 +15,10 @@ export default {
   version: packageJSON.version,
   description: packageJSON.description,
   install(app, config) {
-    app.waitForService(ChatService, chatService =>
-      chatService.addTools(packageJSON.name, tools)
-    );
     if (config.kalshi) {
+      app.waitForService(ChatService, chatService =>
+        chatService.addTools(packageJSON.name, tools)
+      );
       app.addServices(new KalshiService(config.kalshi));
     }
   },
