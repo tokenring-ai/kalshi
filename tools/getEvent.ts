@@ -15,7 +15,7 @@ async function execute(
     throw new Error(`[${name}] ticker is required`);
   }
 
-  agent.infoLine(`[kalshiGetEvent] Fetching event: ${ticker}`);
+  agent.infoMessage(`[kalshiGetEvent] Fetching event: ${ticker}`);
   const event = await kalshi.getEvent(ticker);
   return {event};
 }

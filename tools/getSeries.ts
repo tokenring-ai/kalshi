@@ -15,7 +15,7 @@ async function execute(
     throw new Error(`[${name}] ticker is required`);
   }
 
-  agent.infoLine(`[kalshiGetSeries] Fetching series: ${ticker}`);
+  agent.infoMessage(`[kalshiGetSeries] Fetching series: ${ticker}`);
   const series = await kalshi.getSeries(ticker);
   return {series};
 }

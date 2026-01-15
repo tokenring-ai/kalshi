@@ -11,7 +11,7 @@ async function execute(
 ): Promise<{markets?: any}> {
   const kalshi = agent.requireServiceByType(KalshiService);
 
-  agent.infoLine(`[kalshiGetMarkets] Fetching markets`);
+  agent.infoMessage(`[kalshiGetMarkets] Fetching markets`);
   const markets = await kalshi.getMarkets({series_ticker, status, limit, cursor});
   return {markets};
 }

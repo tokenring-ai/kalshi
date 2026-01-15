@@ -15,7 +15,7 @@ async function execute(
     throw new Error(`[${name}] ticker is required`);
   }
 
-  agent.infoLine(`[kalshiGetOrderbook] Fetching orderbook: ${ticker}`);
+  agent.infoMessage(`[kalshiGetOrderbook] Fetching orderbook: ${ticker}`);
   const orderbook = await kalshi.getOrderbook(ticker);
   return {orderbook};
 }
