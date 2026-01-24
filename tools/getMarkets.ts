@@ -4,6 +4,7 @@ import {z} from "zod";
 import KalshiService from "../KalshiService.ts";
 
 const name = "kalshi_getMarkets";
+const displayName = "Kalshi/getMarkets";
 
 async function execute(
   {series_ticker, status, limit, cursor}: z.infer<typeof inputSchema>,
@@ -26,5 +27,5 @@ const inputSchema = z.object({
 });
 
 export default {
-  name, description, inputSchema, execute,
+  name, displayName, description, inputSchema, execute,
 } satisfies TokenRingToolDefinition<typeof inputSchema>;
