@@ -1,5 +1,5 @@
 import Agent from "@tokenring-ai/agent/Agent";
-import {TokenRingToolDefinition} from "@tokenring-ai/chat/schema";
+import {TokenRingToolDefinition, type TokenRingToolJSONResult} from "@tokenring-ai/chat/schema";
 import {z} from "zod";
 import KalshiService from "../KalshiService.ts";
 
@@ -7,9 +7,9 @@ const name = "kalshi_getEvent";
 const displayName = "Kalshi/getEvent";
 
 async function execute(
-  {ticker}: z.infer<typeof inputSchema>,
+  {ticker}: z.output<typeof inputSchema>,
   agent: Agent,
-): Promise<{event?: any}> {
+): Promise<TokenRingToolJSONResult<{event?: any}>> {
   const kalshi = agent.requireServiceByType(KalshiService);
 
   if (!ticker) {
@@ -18,7 +18,10 @@ async function execute(
 
   agent.infoMessage(`[kalshiGetEvent] Fetching event: ${ticker}`);
   const event = await kalshi.getEvent(ticker);
-  return {event};
+  return {
+    type: "json",
+    data: {event}
+  };
 }
 
 const description = "Get a specific Kalshi event by ticker.";
