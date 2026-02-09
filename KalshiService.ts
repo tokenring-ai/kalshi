@@ -16,7 +16,7 @@ export type KalshiMarketOptions = {
 };
 
 export default class KalshiService extends HttpService implements TokenRingService {
-  name = "KalshiService";
+  readonly name = "KalshiService";
   description = "Service for querying Kalshi prediction markets";
 
   defaultHeaders = {};
