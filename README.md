@@ -16,7 +16,7 @@ The `@tokenring-ai/kalshi` package enables seamless integration with the Kalshi 
   - `kalshi_getOrderbook`: Get orderbook data for a market
 - **TypeScript Support**: Full TypeScript definitions and type safety
 - **Input Validation**: Zod schemas for robust input validation
-- **Error Handling**: Built-in error handling and retry logic
+- **Error Handling**: Built-in error handling for invalid inputs
 - **Configurable**: Support for custom API base URLs
 - **Plugin Architecture**: Integrates seamlessly with Token Ring app ecosystem
 - **No Authentication Required**: Access public market data endpoints
@@ -36,11 +36,11 @@ This package does not define chat commands. The functionality is exposed through
 The plugin accepts a configuration object with optional Kalshi settings:
 
 ```typescript
-interface KalshiPluginConfig {
-  kalshi?: {
-    baseUrl?: string;  // Kalshi API base URL (default: https://api.elections.kalshi.com/trade-api/v2)
-  }
-}
+import {z} from "zod";
+
+const packageConfigSchema = z.object({
+  kalshi: KalshiConfigSchema.optional()
+});
 ```
 
 **Example configuration:**
@@ -65,11 +65,24 @@ The package provides the following tools that can be used by Token Ring agents:
 
 Get information about a Kalshi market series by ticker.
 
-**Tool Input Schema:**
+**Tool Definition:**
+- **Name**: `kalshi_getSeries`
+- **Display Name**: `Kalshi/getSeries`
+- **Description**: Get information about a Kalshi market series by ticker.
+
+**Input Schema:**
 ```typescript
 z.object({
   ticker: z.string().min(1).describe("Series ticker (e.g., KXHIGHNY)"),
 })
+```
+
+**Execute Function:**
+```typescript
+async function execute(
+  {ticker}: z.output<typeof inputSchema>,
+  agent: Agent
+): Promise<TokenRingToolJSONResult<{series?: any}>>
 ```
 
 **Example usage:**
@@ -77,14 +90,19 @@ z.object({
 const result = await agent.executeTool("kalshi_getSeries", {
   ticker: "KXHIGHNY"
 });
-// Returns: { series: { title, frequency, category, ... } }
+// Returns: {series: {...}}
 ```
 
 ### kalshi_getMarkets
 
 Get Kalshi markets with optional filtering by series, status, and pagination.
 
-**Tool Input Schema:**
+**Tool Definition:**
+- **Name**: `kalshi_getMarkets`
+- **Display Name**: `Kalshi/getMarkets`
+- **Description**: Get Kalshi markets with optional filtering by series, status, and pagination.
+
+**Input Schema:**
 ```typescript
 z.object({
   series_ticker: z.string().optional().describe("Filter by series ticker"),
@@ -94,6 +112,14 @@ z.object({
 })
 ```
 
+**Execute Function:**
+```typescript
+async function execute(
+  {series_ticker, status, limit, cursor}: z.output<typeof inputSchema>,
+  agent: Agent
+): Promise<TokenRingToolJSONResult<{markets?: any}>>
+```
+
 **Example usage:**
 ```typescript
 const result = await agent.executeTool("kalshi_getMarkets", {
@@ -101,18 +127,31 @@ const result = await agent.executeTool("kalshi_getMarkets", {
   status: "open",
   limit: 10
 });
-// Returns: { markets: [...] }
+// Returns: {markets: {...}}
 ```
 
 ### kalshi_getEvent
 
 Get a specific Kalshi event by ticker.
 
-**Tool Input Schema:**
+**Tool Definition:**
+- **Name**: `kalshi_getEvent`
+- **Display Name**: `Kalshi/getEvent`
+- **Description**: Get a specific Kalshi event by ticker.
+
+**Input Schema:**
 ```typescript
 z.object({
   ticker: z.string().min(1).describe("Event ticker"),
 })
+```
+
+**Execute Function:**
+```typescript
+async function execute(
+  {ticker}: z.output<typeof inputSchema>,
+  agent: Agent
+): Promise<TokenRingToolJSONResult<{event?: any}>>
 ```
 
 **Example usage:**
@@ -120,18 +159,31 @@ z.object({
 const result = await agent.executeTool("kalshi_getEvent", {
   ticker: "KXHIGHNY-25JAN01"
 });
-// Returns: { event: { title, category, markets, ... } }
+// Returns: {event: {...}}
 ```
 
 ### kalshi_getOrderbook
 
 Get the orderbook (bids) for a specific Kalshi market.
 
-**Tool Input Schema:**
+**Tool Definition:**
+- **Name**: `kalshi_getOrderbook`
+- **Display Name**: `Kalshi/getOrderbook`
+- **Description**: Get the orderbook (bids) for a specific Kalshi market.
+
+**Input Schema:**
 ```typescript
 z.object({
   ticker: z.string().min(1).describe("Market ticker"),
 })
+```
+
+**Execute Function:**
+```typescript
+async function execute(
+  {ticker}: z.output<typeof inputSchema>,
+  agent: Agent
+): Promise<TokenRingToolJSONResult<{orderbook?: any}>>
 ```
 
 **Example usage:**
@@ -139,7 +191,7 @@ z.object({
 const result = await agent.executeTool("kalshi_getOrderbook", {
   ticker: "KXHIGHNY-25JAN01-T70"
 });
-// Returns: { orderbook: { yes: [[price, quantity], ...], no: [[price, quantity], ...] } }
+// Returns: {orderbook: {...}}
 ```
 
 ## Services
@@ -154,7 +206,12 @@ constructor(config?: KalshiConfig)
 ```
 
 **Parameters:**
-- `config.baseUrl` (string, optional): Base URL for Kalshi API (defaults to "https://api.elections.kalshi.com/trade-api/v2")
+- `config.baseUrl` (string, optional): Base URL for Kalshi API (defaults to `"https://api.elections.kalshi.com/trade-api/v2"`)
+
+**Properties:**
+- `name`: `"KalshiService"` - Service identifier
+- `description`: `"Service for querying Kalshi prediction markets"` - Human-readable description
+- `defaultHeaders`: `{}` - HTTP headers for requests
 
 **Methods:**
 
@@ -167,6 +224,12 @@ Get series information by ticker.
 
 **Returns:** Promise resolving to series object
 
+**Example:**
+```typescript
+await kalshi.getSeries("KXHIGHNY");
+// Throws error if ticker is empty
+```
+
 #### getMarkets(options?: KalshiMarketOptions): Promise<any>
 
 List markets with optional filtering.
@@ -175,10 +238,20 @@ List markets with optional filtering.
 - `options` (KalshiMarketOptions, optional):
   - `series_ticker` (string): Filter by series ticker
   - `status` (string): Filter by status (e.g., "open", "closed")
-  - `limit` (number): Maximum number of results (default: 100)
+  - `limit` (number): Maximum number of results
   - `cursor` (string): Pagination cursor
 
-**Returns:** Promise resolving to markets array
+**Returns:** Promise resolving to markets response object
+
+**Example:**
+```typescript
+await kalshi.getMarkets({
+  series_ticker: "KXHIGHNY",
+  status: "open",
+  limit: 10,
+  cursor: "some-cursor"
+});
+```
 
 #### getEvent(ticker: string): Promise<any>
 
@@ -189,6 +262,12 @@ Retrieve event details by ticker.
 
 **Returns:** Promise resolving to event object
 
+**Example:**
+```typescript
+await kalshi.getEvent("KXHIGHNY-25JAN01");
+// Throws error if ticker is empty
+```
+
 #### getOrderbook(ticker: string): Promise<any>
 
 Get orderbook data for a market.
@@ -198,7 +277,13 @@ Get orderbook data for a market.
 
 **Returns:** Promise resolving to orderbook object with yes/no bids
 
-**Example usage:**
+**Example:**
+```typescript
+await kalshi.getOrderbook("KXHIGHNY-25JAN01-T70");
+// Throws error if ticker is empty
+```
+
+**Full service example:**
 ```typescript
 import KalshiService from "@tokenring-ai/kalshi";
 
@@ -223,11 +308,11 @@ const event = await kalshi.getEvent("KXHIGHNY-25JAN01");
 const orderbook = await kalshi.getOrderbook("KXHIGHNY-25JAN01-T70");
 ```
 
-## Providers
+## Provider Documentation
 
 ### KalshiService Provider
 
-The `KalshiService` is a TokenRingService that can be required by agents using the `requireServiceByType` method.
+The `KalshiService` is a `TokenRingService` that can be required by agents using the `requireServiceByType` method.
 
 **Provider Type:**
 ```typescript
@@ -237,16 +322,34 @@ import KalshiService from "@tokenring-ai/kalshi";
 const kalshi = agent.requireServiceByType(KalshiService);
 ```
 
-**Usage in tools:**
+**Tool Integration Example:**
 ```typescript
 import Agent from "@tokenring-ai/agent/Agent";
 import {z} from "zod";
 import KalshiService from "../KalshiService.ts";
+import {TokenRingToolJSONResult} from "@tokenring-ai/chat/schema";
 
-async function execute({ticker}: z.infer<typeof inputSchema>, agent: Agent): Promise<any> {
+const name = "kalshi_getSeries";
+const inputSchema = z.object({
+  ticker: z.string().min(1).describe("Series ticker (e.g., KXHIGHNY)"),
+});
+
+async function execute(
+  {ticker}: z.output<typeof inputSchema>,
+  agent: Agent
+): Promise<TokenRingToolJSONResult<{series?: any}>> {
   const kalshi = agent.requireServiceByType(KalshiService);
+
+  if (!ticker) {
+    throw new Error(`[${name}] ticker is required`);
+  }
+
+  agent.infoMessage(`[kalshiGetSeries] Fetching series: ${ticker}`);
   const series = await kalshi.getSeries(ticker);
-  return {series};
+  return {
+    type: "json",
+    data: {series}
+  };
 }
 ```
 
@@ -257,37 +360,6 @@ This package does not define RPC endpoints.
 ## State Management
 
 This package does not implement state persistence or restoration.
-
-## Package Structure
-
-```
-pkg/kalshi/
-├── index.ts                 # Main entry point and plugin export
-├── KalshiService.ts         # Core Kalshi API service
-├── plugin.ts                # Token Ring plugin integration
-├── tools.ts                 # Tool exports
-├── tools/
-│   ├── getSeries.ts         # Get series tool
-│   ├── getMarkets.ts        # Get markets tool
-│   ├── getEvent.ts          # Get event tool
-│   └── getOrderbook.ts      # Get orderbook tool
-├── package.json             # Package metadata and dependencies
-├── vitest.config.ts         # Vitest configuration
-└── README.md                # This documentation
-```
-
-## Testing
-
-Run the test suite:
-
-```bash
-bun run test
-```
-
-**Test commands:**
-- `bun run test` - Run all tests
-- `bun run test:watch` - Run tests in watch mode
-- `bun run test:coverage` - Run tests with coverage report
 
 ## Configuration
 
@@ -307,23 +379,89 @@ const customKalshi = new KalshiService({
 });
 ```
 
+### Plugin Configuration Schema
+
+```typescript
+import {z} from "zod";
+import KalshiConfigSchema from "@tokenring-ai/kalshi/KalshiService.ts";
+
+const packageConfigSchema = z.object({
+  kalshi: KalshiConfigSchema.optional()
+});
+
+// KalshiConfigSchema
+z.object({
+  baseUrl: z.string().optional(),
+});
+```
+
 ## Error Handling
 
 The service includes comprehensive error handling:
 
 - **Invalid inputs**: Throws descriptive errors for missing required parameters
-- **API failures**: Handles HTTP errors and non-OK responses
-- **Network issues**: Uses retry logic for transient failures
+- **API failures**: Handles HTTP errors through the base `HttpService`
 - **JSON parsing**: Validates and sanitizes API responses
 
 **Error examples:**
 ```typescript
 // Empty ticker throws error
 await kalshi.getSeries("");  // Error: "ticker is required"
+await kalshi.getEvent("");   // Error: "ticker is required"
+await kalshi.getOrderbook(""); // Error: "ticker is required"
 
-// Empty ticker throws error
-await kalshi.getEvent("");  // Error: "ticker is required"
+// Valid usage
+await kalshi.getSeries("KXHIGHNY"); // OK
 ```
+
+## Package Structure
+
+```
+pkg/kalshi/
+├── index.ts                 # Main entry point - exports KalshiService
+├── KalshiService.ts         # Core Kalshi API service
+├── plugin.ts                # Token Ring plugin integration
+├── tools.ts                 # Tool exports
+├── tools/
+│   ├── getSeries.ts         # Get series tool
+│   ├── getMarkets.ts        # Get markets tool
+│   ├── getEvent.ts          # Get event tool
+│   └── getOrderbook.ts      # Get orderbook tool
+├── package.json             # Package metadata and dependencies
+├── vitest.config.ts         # Vitest configuration
+├── README.md                # This documentation
+└── design/                  # Design documents
+    └── quick_start_market_data.md  # Quick start guide for market data access
+```
+
+## Testing
+
+Run the test suite:
+
+```bash
+bun run test
+```
+
+**Test commands:**
+- `bun run test` - Run all tests
+- `bun run test:watch` - Run tests in watch mode
+- `bun run test:coverage` - Run tests with coverage report
+
+## Dependencies
+
+### Production Dependencies
+
+- `@tokenring-ai/app` (0.2.0) - Base application framework with service management
+- `@tokenring-ai/chat` (0.2.0) - Chat service for agent communication
+- `@tokenring-ai/agent` (0.2.0) - Agent orchestration system
+- `@tokenring-ai/utility` (0.2.0) - Shared utilities including HttpService
+- `zod` (^4.3.6) - Schema validation
+
+### Development Dependencies
+
+- `vitest` (^4.0.18) - Testing framework
+- `@vitest/coverage-v8` (^4.0.18) - Coverage reporter
+- `typescript` (^5.9.3) - TypeScript compiler
 
 ## Examples
 
@@ -404,6 +542,23 @@ if (page1.cursor) {
 }
 ```
 
+### Plugin Installation
+
+```typescript
+import TokenRingApp from "@tokenring-ai/app";
+import kalshiPlugin from "@tokenring-ai/kalshi";
+
+const app = new TokenRingApp();
+
+app.install(kalshiPlugin, {
+  kalshi: {
+    baseUrl: "https://api.elections.kalshi.com/trade-api/v2"
+  }
+});
+
+// Tools are automatically registered when Kalshi config is present
+```
+
 ## Understanding Kalshi Markets
 
 ### Series, Events, and Markets
@@ -415,6 +570,10 @@ if (page1.cursor) {
 ### Orderbook Structure
 
 Kalshi orderbooks only return bids (not asks) due to the reciprocal relationship between YES and NO positions. A YES bid at 60¢ is equivalent to a NO ask at 40¢.
+
+## Quick Start
+
+For a quick start guide on accessing market data without authentication, see the [Design Document](./design/quick_start_market_data.md).
 
 ## License
 
