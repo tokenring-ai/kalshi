@@ -15,12 +15,10 @@ export default {
   version: packageJSON.version,
   description: packageJSON.description,
   install(app, config) {
-    if (config.kalshi) {
-      app.waitForService(ChatService, chatService =>
-        chatService.addTools(tools)
-      );
-      app.addServices(new KalshiService(config.kalshi));
-    }
+    app.waitForService(ChatService, chatService =>
+      chatService.addTools(tools)
+    );
+    app.addServices(new KalshiService(config.kalshi));
   },
   config: packageConfigSchema
 } satisfies TokenRingPlugin<typeof packageConfigSchema>;
