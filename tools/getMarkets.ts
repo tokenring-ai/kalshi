@@ -12,7 +12,7 @@ async function execute(
 ): Promise<TokenRingToolJSONResult<{markets?: any}>> {
   const kalshi = agent.requireServiceByType(KalshiService);
 
-  agent.infoMessage(`[kalshiGetMarkets] Fetching markets`);
+  agent.infoMessage(`[${name}] Fetching markets`);
   const markets = await kalshi.getMarkets({series_ticker, status, limit, cursor});
   return {
     type: "json",

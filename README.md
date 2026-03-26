@@ -24,7 +24,7 @@ The `@tokenring-ai/kalshi` package enables seamless integration with the Kalshi 
 ## Installation
 
 ```bash
-bun install @tokenring-ai/kalshi
+bun add @tokenring-ai/kalshi
 ```
 
 ## Core Components

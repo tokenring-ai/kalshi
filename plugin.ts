@@ -2,7 +2,7 @@ import {TokenRingPlugin} from "@tokenring-ai/app";
 import {ChatService} from "@tokenring-ai/chat";
 import {z} from "zod";
 import KalshiService, {KalshiConfigSchema} from "./KalshiService.ts";
-import packageJSON from './package.json' with {type: 'json'};
+import packageJSON from "./package.json" with {type: "json"};
 
 import tools from "./tools.ts";
 
