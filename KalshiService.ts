@@ -1,4 +1,4 @@
-import {TokenRingService} from "@tokenring-ai/app/types";
+import type {TokenRingService} from "@tokenring-ai/app/types";
 import {HttpService} from "@tokenring-ai/utility/http/HttpService";
 import {z} from "zod";
 
@@ -15,7 +15,9 @@ export type KalshiMarketOptions = {
   cursor?: string;
 };
 
-export default class KalshiService extends HttpService implements TokenRingService {
+export default class KalshiService
+  extends HttpService
+  implements TokenRingService {
   readonly name = "KalshiService";
   description = "Service for querying Kalshi prediction markets";
 
@@ -24,15 +26,20 @@ export default class KalshiService extends HttpService implements TokenRingServi
 
   constructor(config: KalshiConfig = {}) {
     super();
-    this.baseUrl = config.baseUrl || "https://api.elections.kalshi.com/trade-api/v2";
+    this.baseUrl =
+      config.baseUrl || "https://api.elections.kalshi.com/trade-api/v2";
   }
 
-  async getSeries(ticker: string): Promise<any> {
+  getSeries(ticker: string): Promise<any> {
     if (!ticker) throw new Error("ticker is required");
-    return this.fetchJson(`/series/${ticker}`, {method: "GET"}, "Kalshi get series");
+    return this.fetchJson(
+      `/series/${ticker}`,
+      {method: "GET"},
+      "Kalshi get series",
+    );
   }
 
-  async getMarkets(opts: KalshiMarketOptions = {}): Promise<any> {
+  getMarkets(opts: KalshiMarketOptions = {}): Promise<any> {
     const params = new URLSearchParams();
     if (opts.series_ticker) params.set("series_ticker", opts.series_ticker);
     if (opts.status) params.set("status", opts.status);
@@ -40,16 +47,28 @@ export default class KalshiService extends HttpService implements TokenRingServi
     if (opts.cursor) params.set("cursor", opts.cursor);
 
     const query = params.toString();
-    return this.fetchJson(`/markets${query ? `?${query}` : ""}`, {method: "GET"}, "Kalshi get markets");
+    return this.fetchJson(
+      `/markets${query ? `?${query}` : ""}`,
+      {method: "GET"},
+      "Kalshi get markets",
+    );
   }
 
-  async getEvent(ticker: string): Promise<any> {
+  getEvent(ticker: string): Promise<any> {
     if (!ticker) throw new Error("ticker is required");
-    return this.fetchJson(`/events/${ticker}`, {method: "GET"}, "Kalshi get event");
+    return this.fetchJson(
+      `/events/${ticker}`,
+      {method: "GET"},
+      "Kalshi get event",
+    );
   }
 
-  async getOrderbook(ticker: string): Promise<any> {
+  getOrderbook(ticker: string): Promise<any> {
     if (!ticker) throw new Error("ticker is required");
-    return this.fetchJson(`/markets/${ticker}/orderbook`, {method: "GET"}, "Kalshi get orderbook");
+    return this.fetchJson(
+      `/markets/${ticker}/orderbook`,
+      {method: "GET"},
+      "Kalshi get orderbook",
+    );
   }
 }

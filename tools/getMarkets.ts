@@ -1,5 +1,5 @@
-import Agent from "@tokenring-ai/agent/Agent";
-import {TokenRingToolDefinition, type TokenRingToolJSONResult} from "@tokenring-ai/chat/schema";
+import type Agent from "@tokenring-ai/agent/Agent";
+import type {TokenRingToolDefinition, TokenRingToolJSONResult,} from "@tokenring-ai/chat/schema";
 import {z} from "zod";
 import KalshiService from "../KalshiService.ts";
 
@@ -9,26 +9,45 @@ const displayName = "Kalshi/getMarkets";
 async function execute(
   {series_ticker, status, limit, cursor}: z.output<typeof inputSchema>,
   agent: Agent,
-): Promise<TokenRingToolJSONResult<{markets?: any}>> {
+): Promise<TokenRingToolJSONResult<{ markets?: any }>> {
   const kalshi = agent.requireServiceByType(KalshiService);
 
   agent.infoMessage(`[${name}] Fetching markets`);
-  const markets = await kalshi.getMarkets({series_ticker, status, limit, cursor});
+  const markets = await kalshi.getMarkets({
+    series_ticker,
+    status,
+    limit,
+    cursor,
+  });
   return {
     type: "json",
-    data: {markets}
+    data: {markets},
   };
 }
 
-const description = "Get Kalshi markets with optional filtering by series, status, and pagination.";
+const description =
+  "Get Kalshi markets with optional filtering by series, status, and pagination.";
 
 const inputSchema = z.object({
   series_ticker: z.string().optional().describe("Filter by series ticker"),
-  status: z.string().optional().describe("Filter by status (e.g., 'open', 'closed')"),
-  limit: z.number().int().positive().max(200).optional().describe("Number of results (default: 100)"),
+  status: z
+    .string()
+    .optional()
+    .describe("Filter by status (e.g., 'open', 'closed')"),
+  limit: z
+    .number()
+    .int()
+    .positive()
+    .max(200)
+    .optional()
+    .describe("Number of results (default: 100)"),
   cursor: z.string().optional().describe("Pagination cursor"),
 });
 
 export default {
-  name, displayName, description, inputSchema, execute,
+  name,
+  displayName,
+  description,
+  inputSchema,
+  execute,
 } satisfies TokenRingToolDefinition<typeof inputSchema>;
