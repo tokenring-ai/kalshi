@@ -1,5 +1,5 @@
 import type Agent from "@tokenring-ai/agent/Agent";
-import type {TokenRingToolDefinition, TokenRingToolJSONResult,} from "@tokenring-ai/chat/schema";
+import type {TokenRingToolDefinition, TokenRingToolResult} from "@tokenring-ai/chat/schema";
 import {z} from "zod";
 import KalshiService from "../KalshiService.ts";
 
@@ -9,7 +9,7 @@ const displayName = "Kalshi/getMarkets";
 async function execute(
   {series_ticker, status, limit, cursor}: z.output<typeof inputSchema>,
   agent: Agent,
-): Promise<TokenRingToolJSONResult<{ markets?: any }>> {
+): Promise<TokenRingToolResult> {
   const kalshi = agent.requireServiceByType(KalshiService);
 
   agent.infoMessage(`[${name}] Fetching markets`);
@@ -19,10 +19,7 @@ async function execute(
     limit,
     cursor,
   });
-  return {
-    type: "json",
-    data: {markets},
-  };
+  return JSON.stringify(markets);
 }
 
 const description =

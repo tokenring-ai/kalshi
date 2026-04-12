@@ -36,14 +36,17 @@ The core service class for Kalshi API interactions. Extends `HttpService` and im
 **Location**: `pkg/kalshi/KalshiService.ts`
 
 **Constructor:**
+
 ```typescript
 constructor(config?: KalshiConfig)
 ```
 
 **Parameters:**
+
 - `config.baseUrl` (string, optional): Base URL for Kalshi API (defaults to `"https://api.elections.kalshi.com/trade-api/v2"`)
 
 **Properties:**
+
 - `name`: `"KalshiService"` - Service identifier
 - `description`: `"Service for querying Kalshi prediction markets"` - Human-readable description
 - `defaultHeaders`: `{}` - HTTP headers for requests
@@ -56,6 +59,7 @@ constructor(config?: KalshiConfig)
 Get series information by ticker.
 
 **Parameters:**
+
 - `ticker` (string): Series ticker (required)
 
 **Returns:** Promise resolving to series object
@@ -63,6 +67,7 @@ Get series information by ticker.
 **Throws:** Error if ticker is empty
 
 **Example:**
+
 ```typescript
 await kalshi.getSeries("KXHIGHNY");
 ```
@@ -72,6 +77,7 @@ await kalshi.getSeries("KXHIGHNY");
 List markets with optional filtering.
 
 **Parameters:**
+
 - `options` (KalshiMarketOptions, optional):
   - `series_ticker` (string): Filter by series ticker
   - `status` (string): Filter by status (e.g., "open", "closed")
@@ -81,6 +87,7 @@ List markets with optional filtering.
 **Returns:** Promise resolving to markets response object
 
 **Example:**
+
 ```typescript
 await kalshi.getMarkets({
   series_ticker: "KXHIGHNY",
@@ -94,6 +101,7 @@ await kalshi.getMarkets({
 Retrieve event details by ticker.
 
 **Parameters:**
+
 - `ticker` (string): Event ticker (required)
 
 **Returns:** Promise resolving to event object
@@ -101,6 +109,7 @@ Retrieve event details by ticker.
 **Throws:** Error if ticker is empty
 
 **Example:**
+
 ```typescript
 await kalshi.getEvent("KXHIGHNY-25JAN01");
 ```
@@ -110,6 +119,7 @@ await kalshi.getEvent("KXHIGHNY-25JAN01");
 Get orderbook data for a market.
 
 **Parameters:**
+
 - `ticker` (string): Market ticker (required)
 
 **Returns:** Promise resolving to orderbook object with yes/no bids
@@ -117,6 +127,7 @@ Get orderbook data for a market.
 **Throws:** Error if ticker is empty
 
 **Example:**
+
 ```typescript
 await kalshi.getOrderbook("KXHIGHNY-25JAN01-T70");
 ```
@@ -136,6 +147,7 @@ Get information about a Kalshi market series by ticker.
 - **Description**: Get information about a Kalshi market series by ticker.
 
 **Input Schema:**
+
 ```typescript
 z.object({
   ticker: z.string().min(1).describe("Series ticker (e.g., KXHIGHNY)"),
@@ -153,6 +165,7 @@ Get Kalshi markets with optional filtering by series, status, and pagination.
 - **Description**: Get Kalshi markets with optional filtering by series, status, and pagination.
 
 **Input Schema:**
+
 ```typescript
 z.object({
   series_ticker: z.string().optional().describe("Filter by series ticker"),
@@ -173,6 +186,7 @@ Get a specific Kalshi event by ticker.
 - **Description**: Get a specific Kalshi event by ticker.
 
 **Input Schema:**
+
 ```typescript
 z.object({
   ticker: z.string().min(1).describe("Event ticker"),
@@ -190,6 +204,7 @@ Get the orderbook (bids) for a specific Kalshi market.
 - **Description**: Get the orderbook (bids) for a specific Kalshi market.
 
 **Input Schema:**
+
 ```typescript
 z.object({
   ticker: z.string().min(1).describe("Market ticker"),
@@ -205,6 +220,7 @@ z.object({
 The `KalshiService` is a `TokenRingService` that can be required by agents using the `requireServiceByType` method.
 
 **Provider Type:**
+
 ```typescript
 import KalshiService from "@tokenring-ai/kalshi";
 
@@ -213,6 +229,7 @@ const kalshi = agent.requireServiceByType(KalshiService);
 ```
 
 **Tool Integration Example:**
+
 ```typescript
 import Agent from "@tokenring-ai/agent/Agent";
 import {z} from "zod";
@@ -291,6 +308,7 @@ z.object({
 ```
 
 **Example configuration:**
+
 ```typescript
 import TokenRingApp from "@tokenring-ai/app";
 import kalshiPlugin from "@tokenring-ai/kalshi";
@@ -323,6 +341,7 @@ app.install(kalshiPlugin, {
 ```
 
 When installed with a Kalshi configuration, the plugin:
+
 1. Creates and registers a `KalshiService` instance
 2. Registers all four tools with the `ChatService`
 
@@ -567,6 +586,7 @@ bun run test
 ```
 
 **Test commands:**
+
 - `bun run test` - Run all tests
 - `bun run test:watch` - Run tests in watch mode
 - `bun run test:coverage` - Run tests with coverage report
@@ -633,6 +653,7 @@ The service includes comprehensive error handling:
 - **JSON parsing**: Validates and sanitizes API responses
 
 **Error examples:**
+
 ```typescript
 // Empty ticker throws error
 await kalshi.getSeries("");  // Error: "ticker is required"
