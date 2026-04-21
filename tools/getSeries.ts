@@ -1,15 +1,12 @@
 import type Agent from "@tokenring-ai/agent/Agent";
-import type {TokenRingToolDefinition, TokenRingToolResult} from "@tokenring-ai/chat/schema";
-import {z} from "zod";
+import type { TokenRingToolDefinition, TokenRingToolResult } from "@tokenring-ai/chat/schema";
+import { z } from "zod";
 import KalshiService from "../KalshiService.ts";
 
 const name = "kalshi_getSeries";
 const displayName = "Kalshi/getSeries";
 
-async function execute(
-  {ticker}: z.output<typeof inputSchema>,
-  agent: Agent,
-): Promise<TokenRingToolResult> {
+async function execute({ ticker }: z.output<typeof inputSchema>, agent: Agent): Promise<TokenRingToolResult> {
   const kalshi = agent.requireServiceByType(KalshiService);
 
   if (!ticker) {

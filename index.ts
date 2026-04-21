@@ -1,1 +1,1 @@
-export {default as KalshiService} from "./KalshiService.ts";
+export { default as KalshiService } from "./KalshiService.ts";
