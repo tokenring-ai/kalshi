@@ -1,22 +1,15 @@
 # @tokenring-ai/kalshi
 
-Kalshi prediction markets integration for Token Ring AI agents. This package provides a service for interacting with the
-Kalshi API and tools for AI agents to query market data, series information, events, and orderbooks.
+Kalshi prediction markets integration for Token Ring AI agents. This package provides a service for interacting with the Kalshi API and tools for AI agents to query market data, series information, events, and orderbooks.
 
 ## Overview
 
-The `@tokenring-ai/kalshi` package enables seamless integration with the Kalshi API for querying prediction markets and
-events. It is designed specifically for use within the Token Ring AI agent framework, allowing agents to access
-real-time prediction market data without authentication.
+The `@tokenring-ai/kalshi` package enables seamless integration with the Kalshi API for querying prediction markets and events. It is designed specifically for use within the Token Ring AI agent framework, allowing agents to access real-time prediction market data without authentication.
 
 ### Key Features
 
 - **Kalshi Service**: Core service for direct API interactions with Kalshi
-- **Agent Tools**: Four pre-built tools for AI workflows:
-- `kalshi_getSeries`: Get series information by ticker
-- `kalshi_getMarkets`: List and filter markets with pagination
-- `kalshi_getEvent`: Retrieve event details by ticker
-- `kalshi_getOrderbook`: Get orderbook data for a market
+- **Agent Tools**: Four pre-built tools for AI workflows
 - **TypeScript Support**: Full TypeScript definitions and type safety
 - **Input Validation**: Zod schemas for robust input validation
 - **Error Handling**: Built-in error handling for invalid inputs
@@ -38,6 +31,10 @@ bun add @tokenring-ai/kalshi
 - Access market orderbook data (bids only)
 - Type-safe API with Zod validation
 - Plugin-based integration with Token Ring applications
+
+## Chat Commands
+
+This package does not define any chat commands.
 
 ## Tools
 
@@ -101,6 +98,8 @@ app.install(kalshiPlugin, {
 
 MIT License - see LICENSE file for details.
 
+---
+
 ## Developer Reference
 
 ### Core Components
@@ -119,8 +118,7 @@ constructor(config?: KalshiConfig)
 
 **Parameters:**
 
-- `config.baseUrl` (string, optional): Base URL for Kalshi API (defaults to
-  `"https://api.elections.kalshi.com/trade-api/v2"`)
+- `config.baseUrl` (string, optional): Base URL for Kalshi API (defaults to `https://api.elections.kalshi.com/trade-api/v2`)
 
 **Properties:**
 
@@ -137,7 +135,7 @@ Get series information by ticker.
 
 - `ticker` (string): Series ticker (required)
 
-**Returns:** Promise resolving to series object
+**Returns:** Promise resolving to series object (JSONValue)
 
 **Throws:** Error if ticker is empty
 
@@ -155,12 +153,12 @@ List markets with optional filtering.
 **Parameters:**
 
 - `opts` (KalshiMarketOptions, optional):
-- `series_ticker` (string): Filter by series ticker
-- `status` (string): Filter by status (e.g., "open", "closed")
-- `limit` (number): Maximum number of results (max 200)
-- `cursor` (string): Pagination cursor
+  - `series_ticker` (string): Filter by series ticker
+  - `status` (string): Filter by status (e.g., "open", "closed")
+  - `limit` (number): Maximum number of results (max 200)
+  - `cursor` (string): Pagination cursor
 
-**Returns:** Promise resolving to markets response object
+**Returns:** Promise resolving to markets response object (JSONValue)
 
 **Example:**
 
@@ -181,7 +179,7 @@ Retrieve event details by ticker.
 
 - `ticker` (string): Event ticker (required)
 
-**Returns:** Promise resolving to event object
+**Returns:** Promise resolving to event object (JSONValue)
 
 **Throws:** Error if ticker is empty
 
@@ -200,7 +198,7 @@ Get orderbook data for a market.
 
 - `ticker` (string): Market ticker (required)
 
-**Returns:** Promise resolving to orderbook object with yes/no bids
+**Returns:** Promise resolving to orderbook object with yes/no bids (JSONValue)
 
 **Throws:** Error if ticker is empty
 
@@ -228,7 +226,7 @@ const kalshi = agent.requireServiceByType(KalshiService);
 
 ### Tool Definitions
 
-The package exports four tools that can be used by Token Ring agents:
+The package exports four tools that can be used by Token Ring agents.
 
 **Location**: `pkg/kalshi/tools.ts`
 
@@ -487,19 +485,17 @@ pkg/kalshi/
 │   └── getSeries.ts         # Get series tool
 ├── package.json             # Package metadata and dependencies
 ├── vitest.config.ts         # Vitest configuration
-├── README.md                # This documentation
-└── design/                  # Design documents
-    └── quick_start_market_data.md  # Quick start guide for market data access
+└── README.md                # This documentation
 ```
 
 ### Dependencies
 
 #### Production Dependencies
 
-- `@tokenring-ai/app` (0.2.0) - Base application framework with service management
-- `@tokenring-ai/chat` (0.2.0) - Chat service for agent communication
-- `@tokenring-ai/agent` (0.2.0) - Agent orchestration system
-- `@tokenring-ai/utility` (0.2.0) - Shared utilities including HTTPRetriever
+- `@tokenring-ai/app` (workspace:*) - Base application framework with service management
+- `@tokenring-ai/chat` (workspace:*) - Chat service for agent communication
+- `@tokenring-ai/agent` (workspace:*) - Agent orchestration system
+- `@tokenring-ai/utility` (workspace:*) - Shared utilities including HTTPRetriever
 - `zod` (^4.3.6) - Schema validation
 
 #### Development Dependencies
@@ -533,8 +529,3 @@ await kalshi.getSeries("KXHIGHNY"); // OK
 - **@tokenring-ai/agent**: Agent orchestration system
 - **@tokenring-ai/chat**: Chat service and tool definitions
 - **@tokenring-ai/utility**: HTTP service and utilities
-
-### Quick Start
-
-For a quick start guide on accessing market data without authentication, see
-the [Design Document](./design/quick_start_market_data.md).
