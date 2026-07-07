@@ -1,6 +1,6 @@
 # @tokenring-ai/kalshi
 
-Kalshi prediction markets integration for Token Ring AI agents. This package provides a service for interacting with the Kalshi API and tools for AI agents to query market data, series information, events, and orderbooks.
+Kalshi prediction market integration for Token Ring AI agents. This package provides a service for interacting with the Kalshi API and tools for AI agents to query market data, series information, events, and orderbooks.
 
 ## Overview
 
@@ -8,7 +8,7 @@ The `@tokenring-ai/kalshi` package enables seamless integration with the Kalshi 
 
 ### Key Features
 
-- **Kalshi Service**: Core service for direct API interactions with Kalshi
+- **KalshiService**: Core service for direct API interactions with Kalshi
 - **Agent Tools**: Four pre-built tools for AI workflows
 - **TypeScript Support**: Full TypeScript definitions and type safety
 - **Input Validation**: Zod schemas for robust input validation
@@ -40,12 +40,12 @@ This package does not define any chat commands.
 
 The package provides four tools for AI agent interaction:
 
-| Tool                  | Description                                                                  |
-|-----------------------|------------------------------------------------------------------------------|
-| `kalshi_getSeries`    | Get information about a Kalshi market series by ticker                       |
-| `kalshi_getMarkets`   | Get Kalshi markets with optional filtering by series, status, and pagination |
-| `kalshi_getEvent`     | Get a specific Kalshi event by ticker                                        |
-| `kalshi_getOrderbook` | Get the orderbook (bids) for a specific Kalshi market                        |
+| Tool | Description |
+|------|-------------|
+| `kalshi_getSeries` | Get information about a Kalshi market series by ticker |
+| `kalshi_getMarkets` | Get Kalshi markets with optional filtering by series, status, and pagination |
+| `kalshi_getEvent` | Get a specific Kalshi event by ticker |
+| `kalshi_getOrderbook` | Get the orderbook (bids) for a specific Kalshi market |
 
 ## Configuration
 
@@ -55,9 +55,9 @@ This package does not require any environment variables. Configuration is passed
 
 ### Configuration Options
 
-| Option    | Type     | Required | Default                                         | Description             |
-|-----------|----------|----------|-------------------------------------------------|-------------------------|
-| `baseUrl` | `string` | No       | `https://api.elections.kalshi.com/trade-api/v2` | Base URL for Kalshi API |
+| Option | Type | Required | Default | Description |
+|--------|------|----------|---------|-------------|
+| `baseUrl` | `string` | No | `https://api.elections.kalshi.com/trade-api/v2` | Base URL for Kalshi API |
 
 ### Configuration Example
 
@@ -89,7 +89,7 @@ import kalshiPlugin from "@tokenring-ai/kalshi";
 const app = new TokenRingApp();
 app.install(kalshiPlugin, {
   kalshi: {
-    baseUrl: "https://api.elections.kalshi.com/trade-api/v2"  // Optional, defaults to Kalshi API
+    baseUrl: "https://api.elections.kalshi.com/trade-api/v2" // Optional, defaults to Kalshi API
   }
 });
 ```
@@ -485,7 +485,8 @@ pkg/kalshi/
 │   └── getSeries.ts         # Get series tool
 ├── package.json             # Package metadata and dependencies
 ├── vitest.config.ts         # Vitest configuration
-└── README.md                # This documentation
+├── README.md                # This documentation
+└── LICENSE                  # MIT License
 ```
 
 ### Dependencies
@@ -496,7 +497,7 @@ pkg/kalshi/
 - `@tokenring-ai/chat` (workspace:*) - Chat service for agent communication
 - `@tokenring-ai/agent` (workspace:*) - Agent orchestration system
 - `@tokenring-ai/utility` (workspace:*) - Shared utilities including HTTPRetriever
-- `zod` (^4.3.6) - Schema validation
+- `zod` (^4.4.3) - Schema validation
 
 #### Development Dependencies
 
