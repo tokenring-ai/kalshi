@@ -1,5 +1,6 @@
 import type Agent from "@tokenring-ai/agent/Agent";
 import type { TokenRingToolDefinition, TokenRingToolResult } from "@tokenring-ai/chat/schema";
+import { ToolCallError } from "@tokenring-ai/chat/util/tokenRingTool";
 import { z } from "zod";
 import KalshiService from "../KalshiService.ts";
 
@@ -10,7 +11,7 @@ async function execute({ ticker }: z.output<typeof inputSchema>, agent: Agent): 
   const kalshi = agent.requireServiceByType(KalshiService);
 
   if (!ticker) {
-    throw new Error(`[${name}] ticker is required`);
+    throw new ToolCallError(name, `ticker is required`);
   }
 
   agent.infoMessage(`[kalshiGetSeries] Fetching series: ${ticker}`);
