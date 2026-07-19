@@ -2,11 +2,17 @@ import type { TokenRingService } from "@tokenring-ai/app/types";
 import { HTTPRetriever } from "@tokenring-ai/utility/http/HTTPRetriever";
 import type { JSONValue } from "@tokenring-ai/utility/json/safeParse";
 import { JSONValueSchema } from "@tokenring-ai/utility/json/schema";
+import type { ConfigFieldMeta } from "@tokenring-ai/app/config/metadata";
 import { z } from "zod";
 
-export const KalshiConfigSchema = z.object({
-  baseUrl: z.string().exactOptional(),
-});
+export const KalshiConfigSchema = z
+  .object({
+    baseUrl: z
+      .string()
+      .exactOptional()
+      .meta({ advanced: true, description: "Kalshi API base URL (defaults to the public prediction markets API)" } satisfies ConfigFieldMeta),
+  })
+  .meta({ label: "Kalshi", description: "Kalshi prediction market lookups (public API, no credentials required)" } satisfies ConfigFieldMeta);
 
 export type KalshiConfig = z.infer<typeof KalshiConfigSchema>;
 
